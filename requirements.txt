@@ -1,0 +1,7 @@
+FastAPI
+uvicorn
+httpx
+python-dotenv
+pyyaml
+pytest
+pytest-asyncio

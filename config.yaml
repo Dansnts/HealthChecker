@@ -1,0 +1,7 @@
+urls:
+  - https://httpbin.org/status/200
+  - https://httpbin.org/status/503
+  - https://jsonplaceholder.typicode.com/posts/1
+
+pollInterval: 60
+timeout: 10
