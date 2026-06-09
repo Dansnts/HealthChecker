@@ -7,7 +7,9 @@ A small service that periodically checks the health of a configurable list of UR
 ```
 .
 ├── .env
+├── .env.example
 ├── Dockerfile
+├── docker-compose.yml
 ├── README.md
 ├── config.yaml
 ├── requirements.txt
@@ -45,12 +47,15 @@ cp .env.example .env
 python python/app/api.py
 ```
 
-### Docker
+### Docker Compose
 
 ```bash
-docker build -t health-checker .
-docker run --env-file .env health-checker
+cp .env.example .env
+docker compose up
 ```
+
+The `config.yaml` is mounted as a read-only volume, the URL list can be edited without rebuilding the image.
+
 
 ## Configuration
 Edit `config.yaml` to set the URLs to monitor:
