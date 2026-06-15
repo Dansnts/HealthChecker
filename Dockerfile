@@ -13,7 +13,6 @@
   COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
   COPY --from=builder /usr/local/bin/uvicorn /usr/local/bin/uvicorn
   COPY ./python/app /app/
-  COPY ./config.yaml /app/
 
   RUN useradd -m user && chown -R user /app
   USER user
