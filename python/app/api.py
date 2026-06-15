@@ -1,23 +1,29 @@
 import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
 
 import uvicorn
+from config import Config
 from data import get_result
 from fastapi import FastAPI
 from worker import poll_urls
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Starts the polling worker on startup and cancels it on shutdown."""
-    task = asyncio.create_task(poll_urls())
+    """Loads config and starts the polling worker on startup, cancels it on shutdown."""
+    config_path = os.getenv("CONFIG_PATH", "config.yaml")
+    config = Config(path=config_path)
+
+    task = asyncio.create_task(poll_urls(config))
     task.add_done_callback(
-        lambda t: (
-            print("WORKER ERROR:", t.exception())
-            if not t.cancelled() and t.exception()
-            else None
-        )
+        lambda t: logger.error("Worker stopped unexpectedly: %s", t.exception())
+        if not t.cancelled() and t.exception()
+        else None
     )
     yield
     task.cancel()
@@ -39,6 +45,6 @@ async def get_status():
 if __name__ == "__main__":
     uvicorn.run(
         app,
-        host=str(os.getenv("V4_ADDRESS", "0.0.0.0")),
+        host=os.getenv("V4_ADDRESS", "0.0.0.0"),
         port=int(os.getenv("PORT", 8080)),
     )
